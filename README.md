@@ -144,8 +144,8 @@ These are results from the project's held-out test set. They do not guarantee th
 
 
 ```bash
+git clone https://github.com/shwetak20-sys/JobShield-AI.git
 
-git clone YOUR_GITHUB_REPOSITORY_URL
 
 cd JobShield-AI
 
@@ -153,7 +153,6 @@ cd JobShield-AI
 
 
 
-Replace the placeholder with your actual GitHub repository URL after publishing.
 
 
 
@@ -274,6 +273,15 @@ The response includes:
 - Disclaimer
 
 
+## Live Demo
+
+- **Live Website:** https://boisterous-paletas-2163ea.netlify.app/
+- **GitHub Repository:** https://github.com/shwetak20-sys/JobShield-AI
+- **Backend API:** https://jobshield-ai-api.onrender.com
+- **API Documentation:** https://jobshield-ai-api.onrender.com/docs
+
+
+The frontend is hosted on Netlify and the FastAPI backend is hosted on Render.
 
 ## Current Limitations
 
@@ -307,7 +315,7 @@ JobShield AI is an assistance tool, not a replacement for independent verificati
 
 - Additional fraud-pattern explanations.
 
-- Secure deployment and production API configuration.
+- Further improvements to deployment security, monitoring and reliability.
 
 - Optional URL analysis in a future version.
 
@@ -320,3 +328,8 @@ JobShield AI is an assistance tool, not a replacement for independent verificati
 Developed as an AI/ML portfolio project to explore machine learning, natural language processing, model evaluation and full-stack integration.
 
 
+## Application Screenshot
+
+### Live ML Analysis
+
+![JobShield AI Live Analysis](docs/screenshots/JobShield-Live-Analysis.png)
