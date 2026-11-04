@@ -2,8 +2,7 @@
 "use strict";
 
 // Local FastAPI endpoint.
-const API_URL = "http://127.0.0.1:8000/analyze";
-const $ = (id) => document.getElementById(id);
+const API_URL = "https://jobshield-ai-api.onrender.com/analyze";const $ = (id) => document.getElementById(id);
 const root = document.documentElement;
 
 // Risk colour configuration.
@@ -255,7 +254,7 @@ async function analyzeJob() {
 
     if (error instanceof TypeError) {
       $("error").textContent =
-        "Cannot connect to FastAPI. Check that http://127.0.0.1:8000 is running, then refresh this page.";
+        "Cannot connect to JobShield AI server. Please try again in a moment.";
     } else {
       $("error").textContent =
         error.message || "Analysis failed. Check the backend terminal for details.";
