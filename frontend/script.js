@@ -1,0 +1,325 @@
+
+"use strict";
+
+// Local FastAPI endpoint.
+const API_URL = "http://127.0.0.1:8000/analyze";
+const $ = (id) => document.getElementById(id);
+const root = document.documentElement;
+
+// Risk colour configuration.
+function getRiskLevel(score) {
+  if (score <= 30) {
+    return {
+      label: "Low Risk",
+      color: "#16A34A"
+    };
+  }
+
+  if (score <= 60) {
+    return {
+      label: "Medium Risk",
+      color: "#EAB308"
+    };
+  }
+
+  if (score <= 80) {
+    return {
+      label: "High Risk",
+      color: "#EA580C"
+    };
+  }
+
+  return {
+    label: "Very High Risk",
+    color: "#991B1B"
+  };
+}
+
+// Theme management.
+const savedTheme = localStorage.getItem("jobshield-theme");
+root.dataset.theme = savedTheme === "light" ? "light" : "dark";
+
+function syncTheme() {
+  const light = root.dataset.theme === "light";
+  $("sunmoon").textContent = light ? "☀" : "☾";
+  $("theme").setAttribute(
+    "aria-label",
+    light ? "Switch to dark mode" : "Switch to light mode"
+  );
+}
+
+syncTheme();
+
+$("theme").addEventListener("click", () => {
+  root.dataset.theme = root.dataset.theme === "dark" ? "light" : "dark";
+  localStorage.setItem("jobshield-theme", root.dataset.theme);
+  syncTheme();
+});
+
+// Sample job description.
+const sampleDescription = `Job Title: Remote Data Analyst Intern
+
+Company: Bright Future Analytics
+
+We are looking for enthusiastic students and fresh graduates who want practical experience in data analysis.
+
+Responsibilities: Assist with collecting and organizing data, prepare basic reports and dashboards, and learn Excel, SQL and Python.
+
+Requirements: Basic understanding of data analysis, good communication skills, and willingness to learn.
+
+Employment Type: Internship
+Work Mode: Remote
+Experience: Fresher
+
+Application Process: Submit your resume through the official company careers portal.
+
+This is a fictional demonstration example, not a verified job posting.`;
+
+// Input mode switching.
+function setMode(descriptionMode) {
+  $("descTab").classList.toggle("active", descriptionMode);
+  $("urlTab").classList.toggle("active", !descriptionMode);
+  $("jobDescription").classList.toggle("hidden", !descriptionMode);
+  $("jobUrl").classList.toggle("hidden", descriptionMode);
+  $("error").textContent = "";
+}
+
+$("descTab").addEventListener("click", () => setMode(true));
+$("urlTab").addEventListener("click", () => setMode(false));
+
+// Character counter.
+function updateCount() {
+  $("count").textContent =
+    `${$("jobDescription").value.length.toLocaleString()} / 15,000 characters`;
+}
+
+$("jobDescription").addEventListener("input", () => {
+  updateCount();
+  $("error").textContent = "";
+});
+
+$("sample").addEventListener("click", () => {
+  setMode(true);
+  $("jobDescription").value = sampleDescription;
+  updateCount();
+});
+
+// List rendering.
+function setList(id, items) {
+  const list = $(id);
+  list.replaceChildren();
+
+  for (const item of items) {
+    const li = document.createElement("li");
+    li.textContent = item;
+    list.appendChild(li);
+  }
+}
+
+// Reset risk colours.
+function resetRiskColors() {
+  $("score").style.color = "";
+  $("gauge").style.background =
+    "conic-gradient(from 220deg, #c18a3c 0deg, transparent 0deg)";
+  $("gauge").style.boxShadow = "";
+  $("status").style.color = "";
+}
+
+// Display ML analysis results.
+function displayResults(data) {
+  const score = Number(data.risk_score);
+
+  if (!Number.isFinite(score) || score < 0 || score > 100) {
+    throw new Error("The API returned an invalid risk score.");
+  }
+
+  const prediction = Number(data.prediction);
+  const isSuspicious = prediction === 1;
+
+  // Get dynamic risk colour.
+  const roundedScore = Math.round(score);
+  const risk = getRiskLevel(roundedScore);
+
+  // Display score with dynamic colour.
+  $("score").innerHTML = `${roundedScore}<small>/100</small>`;
+  $("score").style.color = risk.color;
+  $("score").style.transition = "color 0.4s ease";
+
+  // Update circular gauge colour.
+  const degrees = (score / 100) * 280;
+
+  $("gauge").style.background =
+    `conic-gradient(from 220deg,
+      ${risk.color} 0deg ${degrees}deg,
+      rgba(150,120,80,.16) ${degrees}deg 280deg,
+      transparent 280deg)`;
+
+  $("gauge").style.boxShadow = `0 0 18px ${risk.color}35`;
+
+  // Preserve the original ML classification.
+  $("status").textContent =
+    data.result ||
+    (isSuspicious ? "Potentially Suspicious" : "Likely Legitimate");
+
+  $("status").style.color = risk.color;
+
+  // Display risk explanation.
+  $("summary").textContent =
+    `Risk Level: ${risk.label}. The model estimated ` +
+    `${(Number(data.risk_probability) * 100).toFixed(2)}% probability for the fraudulent class.`;
+
+  $("explanation").textContent =
+    data.explanation ||
+    "The model returned a prediction without an explanation.";
+
+  $("notice").textContent =
+    "LIVE ML ANALYSIS — This result was generated by your trained model. It is an estimate, not proof of fraud or authenticity.";
+
+  setList("flags", [
+    `Model classification: ${data.result || (isSuspicious ? "Potentially Suspicious" : "Likely Legitimate")}.`,
+    `Risk score: ${roundedScore}/100 (${risk.label}).`,
+    `Estimated fraudulent-class probability: ${(Number(data.risk_probability) * 100).toFixed(2)}%.`,
+    "This model does not independently verify the employer or detect each individual warning sign."
+  ]);
+
+  setList("recommendations", [
+    "Find the vacancy on the employer's official careers website.",
+    "Verify recruiter email addresses and contact details independently.",
+    "Never pay a registration, training or interview fee to obtain a job.",
+    "Never share OTPs, passwords or banking credentials."
+  ]);
+
+  $("results").scrollIntoView({
+    behavior: "smooth",
+    block: "start"
+  });
+}
+
+// Analyze job posting.
+async function analyzeJob() {
+  $("error").textContent = "";
+
+  if (!$("jobUrl").classList.contains("hidden")) {
+    $("error").textContent =
+      "URL analysis is not available yet. Select Paste Description and enter the job text.";
+    return;
+  }
+
+  const description = $("jobDescription").value.trim();
+
+  if (description.length < 40) {
+    $("error").textContent =
+      "Please enter a job description containing at least 40 characters.";
+    $("jobDescription").focus();
+    return;
+  }
+
+  const button = $("analyze");
+  button.disabled = true;
+  button.textContent = "Analyzing... Please wait";
+
+  try {
+    const response = await fetch(API_URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ description })
+    });
+
+    let data;
+
+    try {
+      data = await response.json();
+    } catch {
+      throw new Error("The backend returned an unreadable response.");
+    }
+
+    if (!response.ok) {
+      const detail =
+        typeof data.detail === "string"
+          ? data.detail
+          : JSON.stringify(data.detail || data);
+
+      throw new Error(detail || `API request failed (${response.status}).`);
+    }
+
+    if (data.success !== true) {
+      throw new Error("The backend did not confirm a successful analysis.");
+    }
+
+    displayResults(data);
+
+  } catch (error) {
+    console.error("JobShield API error:", error);
+
+    if (error instanceof TypeError) {
+      $("error").textContent =
+        "Cannot connect to FastAPI. Check that http://127.0.0.1:8000 is running, then refresh this page.";
+    } else {
+      $("error").textContent =
+        error.message || "Analysis failed. Check the backend terminal for details.";
+    }
+
+  } finally {
+    button.disabled = false;
+    button.textContent = "✦ Analyze with ML Model →";
+  }
+}
+
+$("analyze").addEventListener("click", analyzeJob);
+
+// Reset application.
+$("reset").addEventListener("click", () => {
+  $("jobDescription").value = "";
+  $("jobUrl").value = "";
+
+  updateCount();
+
+  $("error").textContent = "";
+
+  $("score").innerHTML = "--<small>/100</small>";
+
+  resetRiskColors();
+
+  $("status").textContent = "Awaiting analysis";
+
+  $("summary").textContent =
+    "Your model-based risk estimate will appear here.";
+
+  $("explanation").textContent =
+    "A plain-language explanation from the API will appear here.";
+
+  $("notice").textContent =
+    "READY — Enter a job description and select Analyze with ML Model.";
+
+  setList("flags", [
+    "No analysis generated yet. Paste a job description to begin."
+  ]);
+
+  setList("recommendations", [
+    "Verify the employer through its official website.",
+    "Never pay money to secure a job offer.",
+    "Never share OTPs, passwords or banking credentials."
+  ]);
+
+  setMode(true);
+
+  $("analyzer").scrollIntoView({
+    behavior: "smooth",
+    block: "start"
+  });
+});
+
+// Mobile navigation.
+$("menu").addEventListener("click", () => {
+  $("nav").classList.toggle("show");
+});
+
+$("nav").querySelectorAll("a").forEach(link => {
+  link.addEventListener("click", () => {
+    $("nav").classList.remove("show");
+  });
+});
+
+console.log("JobShield AI frontend ready. API:", API_URL);

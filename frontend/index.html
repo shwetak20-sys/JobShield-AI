@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="JobShield AI helps job seekers review job postings with an ML-based risk estimate.">
+  <title>JobShield AI — Don't Get Scammed. Get Hired Smart.</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header>
+  <a class="brand" href="#home">🛡️ JobShield <b>AI</b></a>
+  <nav id="nav" aria-label="Main navigation">
+    <a href="#home">Home</a><a href="#how">How It Works</a><a href="#features">Features</a><a href="#about">About</a>
+  </nav>
+  <div class="header-controls"><span id="sunmoon" aria-hidden="true">☾</span><button id="theme" type="button" aria-label="Switch theme">◐</button><button id="menu" type="button" aria-label="Toggle navigation">☰</button></div>
+</header>
+<main>
+  <section class="hero wrap" id="home">
+    <div>
+      <label>✦ AI-POWERED PROTECTION</label>
+      <h1>Don't Get Scammed.<br><em>Get Hired Smart.</em></h1>
+      <p>Review job and internship descriptions for potential recruitment warning signs. Make more informed decisions before you apply.</p>
+      <a class="btn gold" href="#analyzer">ϟ Analyze Job Offer →</a>
+      <a class="btn outline" href="#how">▶ See How It Works</a>
+      <div class="highlights">🛡 Spot Warning Signs　　ϟ Machine Learning　　▥ Clear Insights　　🔒 Career Awareness</div>
+    </div>
+    <div class="visual" aria-hidden="true"><div class="orbit"></div><div class="shield">✓<small>YOUR CAREER<br>PROTECTED</small></div><span class="float">✦ Smart Review</span></div>
+  </section>
+
+  <section class="wrap section" id="analyzer">
+    <div class="heading"><label>YOUR FIRST LINE OF DEFENCE</label><h2>Analyze a Job Offer</h2><p>Paste a job or internship description to receive a prediction from your trained ML model.</p></div>
+    <div class="panel">
+      <h3>⌕　Job Offer Analyzer</h3>
+      <p class="muted">Paste the complete job or internship description below.</p>
+      <div class="tabs"><button id="descTab" class="active" type="button">▤ Paste Description</button><button id="urlTab" type="button">in LinkedIn URL</button></div>
+      <textarea id="jobDescription" maxlength="15000" placeholder="Paste the complete job or internship description here..." aria-label="Job description"></textarea>
+      <input id="jobUrl" class="hidden" type="url" placeholder="Paste job posting URL (URL analysis is not available yet)" aria-label="Job posting URL">
+      <div class="count"><span id="count">0 / 15,000 characters</span><span>Do not include private personal information.</span></div>
+      <div class="actions">
+        <button class="btn outline" id="sample" type="button">★ Load Demo Example</button>
+        <button class="btn gold" id="analyze" type="button">✦ Analyze with ML Model →</button>
+      </div>
+      <p class="muted note">ⓘ Live analysis uses your trained ML model through the local FastAPI backend. URL analysis is not implemented yet.</p>
+      <p id="error" class="error" role="alert" aria-live="polite"></p>
+    </div>
+  </section>
+
+  <section class="wrap section" id="results">
+    <div class="heading"><label>YOUR ANALYSIS DASHBOARD</label><h2>Job Offer Insights</h2><p>Review the model's risk estimate, classification and practical next steps.</p></div>
+    <div class="notice" id="notice">READY — Enter a job description and select Analyze with ML Model.</div>
+    <div class="grid">
+      <article class="card risk">
+        <b>◉ RISK INDICATOR</b>
+        <div class="gauge" id="gauge"><div><strong id="score">--<small>/100</small></strong><small>Risk Score</small></div></div>
+        <span class="pill" id="status">Awaiting analysis</span>
+        <p class="muted" id="summary">Your model-based risk estimate will appear here.</p>
+      </article>
+      <article class="card"><h3>⚠ Red Flags &amp; Key Insights</h3><ul id="flags"><li>No analysis generated yet. Paste a job description to begin.</li></ul></article>
+      <article class="card"><h3>✦ Analysis Explanation</h3><p class="muted" id="explanation">A plain-language explanation from the API will appear here.</p></article>
+      <article class="card"><h3>✓ Safety Recommendations</h3><ul id="recommendations"><li>Verify the employer through its official website.</li><li>Never pay money to secure a job offer.</li><li>Never share OTPs, passwords or banking credentials.</li></ul></article>
+    </div>
+    <div class="actions below"><button class="btn outline" id="reset" type="button">↻ Check Another Offer</button><small class="muted">A model score is an estimate, not proof of fraud or authenticity.</small></div>
+  </section>
+
+  <section class="wrap section" id="how"><div class="heading"><label>THREE SIMPLE STEPS</label><h2>How JobShield AI Works</h2></div>
+    <div class="three"><article class="card"><h3>01 · 📋 Paste Job Details</h3><p class="muted">Enter the job or internship description you want to review.</p></article><article class="card"><h3>02 · 🤖 ML Analysis</h3><p class="muted">The backend sends the text to your trained TF-IDF and Logistic Regression model.</p></article><article class="card"><h3>03 · 🛡️ Review Insights</h3><p class="muted">Review the estimated risk probability and practical safety reminders.</p></article></div>
+  </section>
+  <section class="wrap section" id="features"><div class="heading"><label>BUILT FOR SMARTER JOB SEARCHES</label><h2>Protection That Makes Sense</h2></div>
+    <div class="three"><article class="card">🎯<h3>ML-Based Risk Indicator</h3><p class="muted">A trained model estimates patterns associated with fraudulent postings.</p></article><article class="card">🚩<h3>Clear Model Insights</h3><p class="muted">Shows the model's classification and estimated fraudulent-class probability.</p></article><article class="card">🔐<h3>Safety Recommendations</h3><p class="muted">Practical reminders to verify employers independently.</p></article></div>
+  </section>
+  <section class="wrap section card about" id="about"><label>ABOUT THE PROJECT</label><h2>Make Your Next Career Move With More Confidence.</h2><p class="muted">JobShield AI helps job seekers review online job and internship postings using a machine-learning model. It cannot verify an employer's identity or guarantee that an offer is safe. Always verify through official company channels.</p></section>
+</main>
+<footer>🛡️ JobShield AI <span>Helping job seekers make informed decisions · © 2026</span></footer>
+<script src="script.js" defer></script>
+</body>
+</html>

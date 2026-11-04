@@ -1,0 +1,41 @@
+{
+    "original_records": 17880,
+    "final_records": 17880,
+    "removed_invalid_labels": 0,
+    "removed_empty_text_records": 0,
+    "exact_duplicate_rows_in_cleaned_data": 0,
+    "target_distribution": {
+        "0": 17014,
+        "1": 866
+    },
+    "input_file": "D:\\AI-Projects\\JobShield-AI\\data\\fake_job_postings.csv",
+    "output_file": "D:\\AI-Projects\\JobShield-AI\\data\\cleaned_job_postings.csv",
+    "text_columns_used": [
+        "title",
+        "company_profile",
+        "description",
+        "requirements",
+        "benefits",
+        "department",
+        "industry",
+        "employment_type",
+        "required_experience",
+        "required_education",
+        "function",
+        "location"
+    ],
+    "missing_values_in_original_data": {
+        "location": 346,
+        "department": 11547,
+        "salary_range": 15012,
+        "company_profile": 3308,
+        "description": 1,
+        "requirements": 2696,
+        "benefits": 7212,
+        "employment_type": 3471,
+        "required_experience": 7050,
+        "required_education": 8105,
+        "industry": 4903,
+        "function": 6455
+    }
+}
